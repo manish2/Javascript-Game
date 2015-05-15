@@ -1,3 +1,10 @@
+/**
+* GameOver.js is a page for when the game ends.  It will show the score accumulated during the game, a button to submit your score,
+* a button to restart the game, a button to go back to the home page, and an image of a pirate skull to match our pirate theme.
+*
+* @author       Rupinder Sandhu, Luda Shu, Manish Mallavarapu, Jacky Chou, Jox Toyod (Team 10 / 5 bits) 
+* @version      0.7
+*/
 FindX.GameOver = function(game) {
     this.gameoverBG;
     this.submitPrompt;
@@ -9,6 +16,9 @@ FindX.GameOver = function(game) {
 
 FindX.GameOver.prototype = {
 	
+    /**
+    * This function loads the buttons and bitmap text for the page. 
+    */
 	create: function () {
         
         this.isSubmitted = false;
@@ -29,14 +39,24 @@ FindX.GameOver.prototype = {
         
 
 	},
+    
+    /**
+    *  This function is a pointer to the Game.js page.  When clicked, it will go to that page.
+    */
 	restartGame: function (pointer) {
-        //localStorage.removeItem('name');
 		this.state.start('Game');
 	},
+    
+    /**
+    *  This function is a pointer to the StartMenu.js page.  When clicked, it will go to that page.
+    */
     quitGame: function (pointer) {
 		this.state.start('StartMenu');
 	},
     
+    /**
+    *  This function is a pointer to a database that stores your end score. 
+    */
     submit: function(pointer) {
         
         console.log(this.isSubmitted);
@@ -51,10 +71,6 @@ FindX.GameOver.prototype = {
                       type: 'POST',
                       contentType: "application/json" 
                 });
-
          }
-        
-        
-        
     }
 };
