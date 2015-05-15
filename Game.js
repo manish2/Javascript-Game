@@ -1,4 +1,25 @@
+/**
+ * @author       Rupinder Sandhu, Luda Shu, Manish Mallavarapu, Jacky Chou, Jox Toyod (Team 10 / 5 bits) 
+ * @version      0.7
+ *
+ *
+ * The game state.
+ *
+ * This describes all the game functionality and interface in the game screen
+ * It constructs the game prototype and all the function associated.
+ * 
+ * This state appears when the user tap the play button on the Start menu
+ * and in the game over when the user click play again button in the Game over state
+ *
+ */
 
+/**
+ * The game instance desclaration
+ * Declare all the instances that is use through the game.
+ *
+ * @class FindX.Game integrates this game state to the current game object
+ * @param {game} game A reference to the currently running game.
+ */
 FindX.Game = function(game) {
     this.randomNumberTop;
     this.randomNumberBottom;
@@ -38,19 +59,28 @@ FindX.Game = function(game) {
     this.showcoins;
     this.addcoin;
     this.wrongding;
-    this.coinding;
-    
+    this.coinding; 
     this.difficultyTracker;
     this.consecutiveAns;
-    
-    // number generator min/max
     this.minTopNumber;
     this.maxTopNumber;
 };
 
+
+/**
+ * The game prototype
+ * Describes and encapsulate all function the are
+ * associated with the game
+ */
 FindX.Game.prototype = {
-    
+
+	/**
+	 * Initializes the game instances and creates the 
+     * images and graphic associated in the game.
+	 * @method create
+	 */
     create: function() {
+        //initialize all instance needed
         this.game.stage.disableVisibilityChange = true;
         this.operator = ['+', '-' ,'*', '/'];
         this.randTemp = [1, 2, 3];
@@ -66,12 +96,15 @@ FindX.Game.prototype = {
         this.maxTopNumber = 9;
         this.difficultyTracker = 1;
        
+        // add the images on the top screen 
         this.add.image(0, 0, 'titlescreen');
         this.add.image(this.world.centerX, 100, 'wheelBanner').anchor.setTo(0.5,0.5);
         this.add.image(50, 70, 'loot', null); 
+        
+        // displays the math equation
         this.mathScene();  
 
-
+        //shows the timer and timer events
         this.showTimer  = this.add.bitmapText(this.world.centerX-1, 98, 'gamefont',  '' + this.timer, 42);
         this.showTimer.anchor.setTo(0.5, 0.5);
         this.timeEvents = this.time.events.loop(Phaser.Timer.SECOND, this.updateCounter, this); 
@@ -93,7 +126,13 @@ FindX.Game.prototype = {
         
     },
     
-    // returns anonymous function to call check answer required by addOnce function
+    
+	/**
+	 * Function helper for the checkAnswer
+     * click one of the choice buttons
+	 * @@param ans the answer get by player
+	 * @return 
+	 */
     check: function(ans, bNumber) {
         
         return function () {
@@ -103,7 +142,12 @@ FindX.Game.prototype = {
               
     },
     
-    // check the ans and change background color(background color is not yet working..
+    /**
+	 * Checks the ans and change background color(background color is not yet working.
+     *
+	 * @param ans the answer get by player
+     * @param bNumber 
+	 */ 
     checkAnswer: function(ans, bNumber){
         
         if(ans == this.choice){
@@ -119,7 +163,12 @@ FindX.Game.prototype = {
         } 
     },
     
-    // sets the difficulty of the (still needs to be updated)
+    
+    /**
+	 * Sets the difficulty of the game
+     * When score is at certain level it
+     * increase the diffulty
+	 */ 
     difficultySetter : function() {
         
         if(this.difficultyTracker >= 10) {        
@@ -133,7 +182,10 @@ FindX.Game.prototype = {
          
     },
     
-    // draw the yellow buttons with rounded curve
+    /**
+	 * draw the yellow buttons with rounded curve
+     *  @returns returns rounded square with the specified color
+     */
     drawButtons: function(x, y, width, height, radius, fill) {
         
          this.choiceButtons = this.add.bitmapData(200,250);
@@ -156,7 +208,12 @@ FindX.Game.prototype = {
         
     },
       
-    //create the math equation
+    /**
+	 * Create the math equation
+     * calls the random generator and displays the 
+     * equation that the user interacts
+     *
+     */
     mathScene: function() {
 
         this.randomGenerator();
@@ -165,7 +222,7 @@ FindX.Game.prototype = {
         this.showXlocation();
         this.showButtons();
         
-       this.showNumberTop = this.add.bitmapText(this.world.centerX, this.world.centerY-200, 'gamefont',  '' + this.randomNumberTop, 105);
+        this.showNumberTop = this.add.bitmapText(this.world.centerX, this.world.centerY-200, 'gamefont',  '' + this.randomNumberTop, 105);
         this.showNumberTop.anchor.setTo(0.5, 0.5);	
         this.showNumberBottom =  this.add.bitmapText(this.world.centerX, this.world.centerY-70, 'gamefont', '' + this.randomNumberBottom, 105);
         this.showNumberBottom.anchor.setTo(0.5, 0.5)
@@ -175,14 +232,18 @@ FindX.Game.prototype = {
         this.showResult = this.add.bitmapText(this.world.centerX + 5, this.world.centerY + 75, 'gamefont', '' + this.result, 105);
         this.showResult.anchor.setTo(0.5, 0.5);	
         
-        
         this.choice1.events.onInputDown.addOnce(this.check(this.ansLeftButton, 1), this);
         this.choice2.events.onInputDown.addOnce(this.check(this.ansMidButton, 2), this);
         this.choice3.events.onInputDown.addOnce(this.check(this.ansRightButton, 3), this);
         
    },
     
-    // show nice equation
+    /**
+	 * Creates the next equation of the game
+     * after the user had chosen the answer
+     * or the user skip the game
+     *
+     */
     nextEquation: function() {
            
         this.showNumberTop.destroy(); 
@@ -199,6 +260,12 @@ FindX.Game.prototype = {
         this.mathScene();      
     },
     
+    /**
+	 * Displays check mark when user enters
+     * the right answer and a skull display
+     * when user get the wrong the answer
+     *
+     */
     notice: function(){
         
         if(this.userAns==true){
@@ -218,8 +285,12 @@ FindX.Game.prototype = {
         }
 
 	},
-    
-    //randomize numbers
+     
+    /**
+	 * Generates the random numbers
+     * to be displayed
+     *
+     */
     randomGenerator: function() {
     
         this.randomOperation = this.game.rnd.integerInRange(0, 3);
@@ -227,7 +298,10 @@ FindX.Game.prototype = {
         this.randomNumberBottom = this.game.rnd.integerInRange(0, 9);       
     },
     
-    //randomize the choice location among the three yellow buttons
+    /**
+	 * Randomize the choice location among the choice buttons
+     * 
+     */
     setChoiceButtons: function() {
              
         var cur = this.choice;
@@ -246,7 +320,10 @@ FindX.Game.prototype = {
          
     },
     
-     //display buttons
+    /**
+	 * Displays the choice buttons 
+     * that is location at the bottom of the game screen
+     */
     showButtons: function(){
                
         //catching the choices;
@@ -283,7 +360,10 @@ FindX.Game.prototype = {
              
     },
     
-    //randomize the location of X 
+    /**
+     * Randomize the location of the 
+     * x in the equation
+     */
     showXlocation: function() {
         
         this.randomX = Math.floor(Math.random() * 4);
@@ -302,7 +382,11 @@ FindX.Game.prototype = {
         
     },
     
-     //skip button function
+    /**
+     * Monitors the skip button.
+     * Checks the conditions to skip 
+     * the game.
+     */
     skipcondition: function(){
         if(this.coins >= 5){
             this.coins -= 5;
@@ -315,7 +399,10 @@ FindX.Game.prototype = {
         }
     },
     
-    //solve the equation and set operator to be displayed
+    /**
+     * Solve the equation and set operator to be displayed
+     *
+     */
     solveEquation: function() {
     
         switch(this.operator[this.randomOperation]) {
@@ -342,15 +429,24 @@ FindX.Game.prototype = {
         
          return this.showCurrentOperator;     
     },
-           
-    // function to call to update the timer
+        
+    /**
+     * function to call to update the timer
+     *
+     */
     updateCounter: function() {
         this.timer--;
 
         this.showTimer.setText('' + this.timer);
     
     },
-       
+    
+    /**
+     * Updates the score
+     * and constantly checks and tracks
+     * the user inputs and the game 
+     * functions and timers
+     */
     update: function() {
          if(this.timer <= 0){
              localStorage.setItem("yourscore", this.score);
