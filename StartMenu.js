@@ -1,8 +1,19 @@
 /**
+* @author       Rupinder Sandhu, Luda Shu, Manish Mallavarapu, Jacky Chou, Jox Toyod (Team 10 / 5 bits) 
+* @version      0.7
+*
+* Start Menu for the game, includes clickable buttons for play,
+* leaderboard and settings. The play button leads to the game
+* Javascript page, the leaderboard button creates a window 
+* which includes the name and scores for each person that
+* has submitted a score. Lastly, the settings button creates a 
+* window for turning the volume on or off.
+*/
+
+/**
  * Shows the Start Menu Interface with designation clickable buttons
  * @method StartMenu
- * @param {} game
- * @return 
+ * @param {} game Variables for the Start Menu screen
  */
 FindX.StartMenu = function(game) {
     this.logo;
@@ -21,9 +32,8 @@ FindX.StartMenu = function(game) {
 FindX.StartMenu.prototype = {
 	
 	/**
-	 * Creates the buttons
-	 * @method create
-	 * @return 
+	 * Creates the buttons, sounds and database needed for leaderboard
+	 * @method create Functions for the Start Menu screen
 	 */
 	create: function () {
         this.onSound = true;
@@ -60,9 +70,8 @@ FindX.StartMenu.prototype = {
 	},
 	/**
 	 * Function call when Play Button is click
-	 * @method startGame
-	 * @param {} pointer
-	 * @return 
+	 * @method startGame Button with a pointer
+	 * @param {} pointer Pointer to the game.js screen
 	 */
 	startGame: function (pointer) {
         this.ding.play();
@@ -71,25 +80,11 @@ FindX.StartMenu.prototype = {
         
 	},
     
-    grabDb : function(data) {
-        
-        var playerScores = []
-        
-              console.log(data);
-        
-            playerScores[0] = data[0].name;
-            console.log(playerScores[0]);
-
-        
-        return playerScores;
-            
-    },
-    
     /**
-     * Function call when High Score Button is click
-     * @method highScore
-     * @param {} pointer
-     * @return 
+     * Function call when High Score Button is click, includes an online 
+     * leaderboard that pull and posts from mongodb database
+     * @method highScore Button with a pointer
+     * @param {} pointer Points to a window created for leaderboard
      */
     highScore: function(pointer) {
         
@@ -154,7 +149,7 @@ FindX.StartMenu.prototype = {
                 name[i].x = -5;  
                 name[i].y = yPos;
 
-                //name
+                //score
                 score[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topScore' + i), 25);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
@@ -177,7 +172,7 @@ FindX.StartMenu.prototype = {
                 name[i].x = -5;  
                 name[i].y = yPos;
 
-                //name
+                //score
                 score[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 25);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
@@ -207,9 +202,8 @@ FindX.StartMenu.prototype = {
     
     /**
      * Settings Menu with toggle On and off Sound
-     * @method settingsMenu
-     * @param {} pointer
-     * @return 
+     * @method settingsMenu A sound setting menu
+     * @param {} pointer Points to a window created for settings
      */
     settingsMenu : function(pointer){
         startPrompt.inputEnabled = false;
