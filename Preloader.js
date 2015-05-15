@@ -1,12 +1,12 @@
 
 /**
- * Description
+ * This script is used to preload all the assets,  
+ * after preloading, the game page will load faster when refreshed. 
  * @method Preloader
- * @param {} game
- * @return 
+ * @param game
  */
 FindX.Preloader = function(game) {
-    this.preloadBar = null;
+    this.preloadBar = null; //preloader bar to show the status of asset loading 
     this.titleText = null;
     this.ready = false;
 };
@@ -14,9 +14,8 @@ FindX.Preloader = function(game) {
 FindX.Preloader.prototype = {
 	
 	/**
-	 * Description
+	 * This function creates the preloader bar and loads all the assets. 
 	 * @method preload
-	 * @return 
 	 */
 	preload: function () {
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY + 250, 'preloaderBar');
@@ -47,9 +46,8 @@ FindX.Preloader.prototype = {
 	
 
 	/**
-	 * Description
+	 * Creates the page and enables resizability.
 	 * @method create
-	 * @return 
 	 */
 	create: function () {
 		this.preloadBar.cropEnabled = false;
@@ -58,9 +56,9 @@ FindX.Preloader.prototype = {
 	},
 
 	/**
-	 * Description
+	 * function that updates the page after loading and 
+     * changes the sate of the page to start. 
 	 * @method update
-	 * @return 
 	 */
 	update: function () {
         if(this.cache.isSoundDecoded('start_audio') && this.ready == false) {
