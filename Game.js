@@ -82,7 +82,7 @@ FindX.Game.prototype = {
     create: function() {
         //initialize all instance needed
         this.game.stage.disableVisibilityChange = true;
-        this.operator = ['+', '-' ,'*', '/'];
+        this.operator = ['+', '-' ,'*', '/']; 
         this.randTemp = [1, 2, 3];
         this.timer = 5; 
         this.userAns = false; 
@@ -123,7 +123,7 @@ FindX.Game.prototype = {
         this.skipButton.frame = 1;
         this.skipButton.height = 100;
         this.skipButton.width = 100;
-        
+         
     },
     
     
@@ -275,7 +275,7 @@ FindX.Game.prototype = {
 		this.correct.alpha = 0;
 		this.add.tween(this.correct).to( { alpha: 1 }, 400, Phaser.Easing.Linear.None, true, 0, 0, true);
         }
-        
+
         if(this.userAns==false){
        	this.incorrect = this.add.sprite(10,250,'wrong');
         this.incorrect.width = 100;
@@ -492,7 +492,21 @@ FindX.Game.prototype = {
             this.skipButton.frame = 0;  
         }
         
+        this.newHighScore();
         this.difficultySetter();
        
-    } 
+    }, 
+    
+    /**
+    *   if user reaches a new high score, they will show a notification and add three rewards: time + 10, coins + 10, extra skip.
+    */
+    newHighScore: function(){
+        
+            if(this.score > highscore){
+            this.skipButton.frame = 0; 
+            this.newTime = this.timer + 10;
+            this.newCoins = this.coins + 10;
+       	    this.add.bitmapText(10, 200, 'gamefont',  'new high score!', 30);
+        }
+    }
 };
