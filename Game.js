@@ -64,6 +64,7 @@ FindX.Game = function(game) {
     this.consecutiveAns;
     this.minTopNumber;
     this.maxTopNumber;
+    this.highScore;
 };
 
 
@@ -95,6 +96,11 @@ FindX.Game.prototype = {
         this.minTopNumber = 0;
         this.maxTopNumber = 9;
         this.difficultyTracker = 1;
+        
+        if(localStorage.getItem('highscore') != null) {
+            this.highScore =   localStorage.getItem('highscore');
+        }
+        
        
         // add the images on the top screen 
         this.add.image(0, 0, 'titlescreen');
@@ -448,12 +454,16 @@ FindX.Game.prototype = {
      * functions and timers
      */
     update: function() {
+        
+        
+        
+        
+        
          if(this.timer <= 0){
              localStorage.setItem("yourscore", this.score);
-             var highscore = localStorage.getItem("highscore");
-             
-                if(highscore !== null){
-                   if (this.score > highscore) {
+            
+                if(this.highScore !== null){
+                   if (this.score > this.highScore) {
                       localStorage.setItem("highscore", this.score );
                       }
                 }else{
@@ -462,7 +472,7 @@ FindX.Game.prototype = {
              
 		     this.state.start('GameOver');
 
-            }
+        }
         
         if(this.userAns == true) { 
            this.timer += this.timerConstant; 
@@ -502,11 +512,11 @@ FindX.Game.prototype = {
     */
     newHighScore: function(){
         
-            if(this.score > highscore){
-            this.skipButton.frame = 0; 
-            this.newTime = this.timer + 10;
-            this.newCoins = this.coins + 10;
-       	    this.add.bitmapText(10, 200, 'gamefont',  'new high score!', 30);
+            if(this.score > this.highScore){
+                this.skipButton.frame = 0; 
+                this.timer += 10;
+                this.coins += 10;
+                this.add.bitmapText(10, 200, 'gamefont',  'new high score!', 30);
         }
     }
 };
