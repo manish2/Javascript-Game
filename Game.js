@@ -18,7 +18,7 @@
  * Declare all the instances that is use through the game.
  *
  * @class FindX.Game integrates this game state to the current game object
- * @param {game} game A reference to the currently running game.
+ * @param game - A reference to the currently running game.
  */
 FindX.Game = function(game) {
     this.randomNumberTop;
@@ -136,8 +136,7 @@ FindX.Game.prototype = {
 	/**
 	 * Function helper for the checkAnswer
      * click one of the choice buttons
-	 * @@param ans the answer get by player
-	 * @return 
+	 * @param ans the answer get by player
 	 */
     check: function(ans, bNumber) {
         
@@ -151,7 +150,7 @@ FindX.Game.prototype = {
     /**
 	 * Checks the ans and change background color(background color is not yet working.
      *
-	 * @param ans the answer get by player
+	 * @param ans - the answer get by player
      * @param bNumber 
 	 */ 
     checkAnswer: function(ans, bNumber){
@@ -189,8 +188,8 @@ FindX.Game.prototype = {
     },
     
     /**
-	 * draw the yellow buttons with rounded curve
-     *  @returns returns rounded square with the specified color
+	 *  draw the yellow buttons with rounded curve
+     *  @return this.choiceButtons - rounded square with the specified color
      */
     drawButtons: function(x, y, width, height, radius, fill) {
         
@@ -218,7 +217,6 @@ FindX.Game.prototype = {
 	 * Create the math equation
      * calls the random generator and displays the 
      * equation that the user interacts
-     *
      */
     mathScene: function() {
 
@@ -245,10 +243,9 @@ FindX.Game.prototype = {
    },
     
     /**
-	 * Creates the next equation of the game
-     * after the user had chosen the answer
-     * or the user skip the game
-     *
+	 * Creates the next equation of the game after the user 
+     * clicks on the choice buttons to choose an answer or the user
+     * clicks on the skip button to skip the question
      */
     nextEquation: function() {
            
@@ -262,7 +259,7 @@ FindX.Game.prototype = {
         this.showChoice2.destroy();
         this.showChoice3.destroy();
         this.randTemp = [1, 2, 3];
-        
+
         this.mathScene();      
     },
     
@@ -293,9 +290,7 @@ FindX.Game.prototype = {
 	},
      
     /**
-	 * Generates the random numbers
-     * to be displayed
-     *
+	 * Generates the random numbers to be displayed
      */
     randomGenerator: function() {
     
@@ -305,8 +300,7 @@ FindX.Game.prototype = {
     },
     
     /**
-	 * Randomize the choice location among the choice buttons
-     * 
+	 * Randomize the choice location among the choice buttons 
      */
     setChoiceButtons: function() {
              
@@ -327,8 +321,7 @@ FindX.Game.prototype = {
     },
     
     /**
-	 * Displays the choice buttons 
-     * that is location at the bottom of the game screen
+	 * Displays the choice buttons that is location at the bottom of the game screen
      */
     showButtons: function(){
                
@@ -367,8 +360,7 @@ FindX.Game.prototype = {
     },
     
     /**
-     * Randomize the location of the 
-     * x in the equation
+     * Randomize the location of x in the equation
      */
     showXlocation: function() {
         
@@ -389,8 +381,7 @@ FindX.Game.prototype = {
     },
     
     /**
-     * Monitors the skip button.
-     * Checks the conditions to skip 
+     * Monitors the skip button. Checks the conditions to skip 
      * the game.
      */
     skipcondition: function(){
@@ -403,11 +394,13 @@ FindX.Game.prototype = {
             this.nextEquation();
         
         }
+        else if(this.score==10){
+            this.nextEquation();
+        }
     },
     
     /**
-     * Solve the equation and set operator to be displayed
-     *
+     * Solve the equation and set operator to be displayed.
      */
     solveEquation: function() {
     
@@ -437,8 +430,7 @@ FindX.Game.prototype = {
     },
         
     /**
-     * function to call to update the timer
-     *
+     * function to call to update the timer.
      */
     updateCounter: function() {
         this.timer--;
@@ -448,17 +440,11 @@ FindX.Game.prototype = {
     },
     
     /**
-     * Updates the score
-     * and constantly checks and tracks
-     * the user inputs and the game 
-     * functions and timers
+     * Updates the score and constantly checks and tracks
+     * the user inputs and the game functions and timers
      */
     update: function() {
-        
-        
-        
-        
-        
+
          if(this.timer <= 0){
              localStorage.setItem("yourscore", this.score);
             
@@ -471,7 +457,6 @@ FindX.Game.prototype = {
                 }
              
 		     this.state.start('GameOver');
-
         }
         
         if(this.userAns == true) { 
@@ -496,27 +481,48 @@ FindX.Game.prototype = {
         }
         
         if(this.coins < 5) {
-         
             this.skipButton.frame = 1;
-        }else if(this.coins >= 5) {
+        }
+        else if(this.coins >= 5) {
             this.skipButton.frame = 0;  
         }
-        
-        this.newHighScore();
+
         this.difficultySetter();
+        this.newHighScore();
        
     }, 
     
     /**
-    *   if user reaches a new high score, they will show a notification and add three rewards: time + 10, coins + 10, extra skip.
-    */
+     * if user reaches a new high score, they will show a notification and add three rewards: 
+     * time + 10, coins + 10, extra skip.
+     */
     newHighScore: function(){
+
+        if(this.score == 10){
+        this.timer += 10;
+        this.coins += 10;
+            
+        this.skipButton.frame = 0;
+            
+        this.add.bitmapText(10, 200, 'gamefont',  'new high score!', 30);
+            
+        this.newNotice = this.add.bitmapText(375, 300, 'gamefont',  'skip+1', 35);
+        this.newNotice2 = this.add.bitmapText(375, 350, 'gamefont',  'coins+10', 35);
+        this.newNotice3 = this.add.bitmapText(375, 400, 'gamefont',  'time+10', 35);
         
-            if(this.score > this.highScore){
-                this.skipButton.frame = 0; 
-                this.timer += 10;
-                this.coins += 10;
-                this.add.bitmapText(10, 200, 'gamefont',  'new high score!', 30);
+        this.newNotice.alpha = 1;
+        this.add.tween(this.newNotice).to( { alpha: 0 }, 400, Phaser.Easing.Linear.None, true);
+        
+        this.newNotice2.alpha = 1;
+        this.add.tween(this.newNotice2).to( { alpha: 0 }, 400, Phaser.Easing.Linear.None, true);
+            
+        this.newNotice3.alpha = 1;
+        this.add.tween(this.newNotice3).to( { alpha: 0 }, 400, Phaser.Easing.Linear.None, true);
+            
+        }
+        else if(this.score > 10){
+        this.skipButton.frame = 1;
         }
     }
+
 };
