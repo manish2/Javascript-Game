@@ -24,10 +24,15 @@ FindX.GameOver.prototype = {
         this.isSubmitted = false;
 		gameoverBG = this.add.image(0, 0, 'gameoverskull');
 		gameoverBG.inputEnabled = true;
-        submitPrompt = this.add.button(this.world.centerX - 45, this.world.centerY + 250, 'submitButton', this.submit, this);
-		gameoverPrompt = this.add.button(this.world.centerX-180, this.world.centerY+350, 'gameoverplay', this.restartGame, this);
-        gameoverPrompt2 = this.add.button(this.world.centerX+10, this.world.centerY+350, 'gameoverquit', this.quitGame, this);
         
+        submitPrompt = this.add.button(this.world.centerX, this.world.centerY + 280, 'submitButton', this.submit, this);
+        submitPrompt.anchor.setTo(0.5, 0.5);
+        
+		gameoverPrompt = this.add.button(this.world.centerX-92, this.world.centerY+350, 'gameoverplay', this.restartGame, this);
+        gameoverPrompt.anchor.setTo(0.5, 0.5);
+        
+        gameoverPrompt2 = this.add.button(this.world.centerX+92, this.world.centerY+350, 'gameoverquit', this.quitGame, this);
+        gameoverPrompt2.anchor.setTo(0.5, 0.5);
         
         yourScoreTitle = this.add.bitmapText(0 , 0,'gamefont', 'Your Score: ', 40);
         yourScoreTitle.x = 100;  
@@ -44,14 +49,24 @@ FindX.GameOver.prototype = {
     *  This function is a pointer to the Game.js page.  When clicked, it will go to that page.
     */
 	restartGame: function (pointer) {
-		this.state.start('Game');
+        this.add.tween(gameoverPrompt.scale).to( { x: 1.1, y: 1.1 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true)
+            .onComplete.addOnce(
+            function(){
+                this.state.start('Game');
+            }, this);
 	},
     
     /**
     *  This function is a pointer to the StartMenu.js page.  When clicked, it will go to that page.
     */
     quitGame: function (pointer) {
-		this.state.start('StartMenu');
+        
+        this.add.tween(gameoverPrompt2.scale).to( { x: 1.1, y: 1.1 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true)
+            .onComplete.addOnce(
+            function(){
+                this.state.start('StartMenu');
+            }, this);
+		
 	},
     
     /**
@@ -59,13 +74,13 @@ FindX.GameOver.prototype = {
     */
     submit: function(pointer) {
         
-        console.log(this.isSubmitted);
+        this.add.tween(submitPrompt.scale).to( { x: 1.1, y: 1.1 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true);
         
          if(this.isSubmitted == false) { 
              
              this.isSubmitted = true;
                 var scoreTosubmit = parseInt(localStorage.getItem('yourscore'));
-                console.log(localStorage.getItem('name') + ' ' + localStorage.getItem('yourscore'));  
+                 
                 $.ajax({ url: "https://api.mongolab.com/api/1/databases/findx/collections/HighScore?apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1",
                       data: JSON.stringify( { "name" : localStorage.getItem('name'), "score": scoreTosubmit} ),
                       type: 'POST',

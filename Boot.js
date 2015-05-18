@@ -114,10 +114,5 @@ FindX.Boot.prototype = {
         // Starts Preloader state/ calls the main method of 'Preloader.js'
         this.state.start('Preloader');
         
-        // Displays maximum height and width of device's display in 
-        //  the debug console.
-        console.log( window.innerHeight);
-        console.log( window.innerWidth)
-        
     }
 }

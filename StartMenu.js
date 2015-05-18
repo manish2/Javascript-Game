@@ -43,9 +43,9 @@ FindX.StartMenu.prototype = {
         this.startSound.play('', 0, 0.8, true);
 		this.add.image(0, 0, 'titlescreen');
         this.logo = this.add.image(this.world.centerX - 230, this.world.centerY - 400, 'titlelogo');
-        highScoreButton = this.add.button(this.world.centerX, this.world.centerY+150, 'HighScore', this.highScore, this, 1 , 0);
+        highScoreButton = this.add.button(this.world.centerX, this.world.centerY+150, 'HighScore', this.highScoreTween, this, 1 , 0);
 		startPrompt = this.add.button(this.world.centerX, this.world.centerY+80, 'PlayButton', this.startGame, this, 1 , 0);
-        settingsButton = this.add.button(this.world.centerX, this.world.centerY+220, 'Settings', this.settingsMenu, this, 0 , 1);
+        settingsButton = this.add.button(this.world.centerX, this.world.centerY+230, 'Settings', this.settingsTween, this, 0 , 1);
         startPrompt.anchor.setTo(0.5, 0.5);
         highScoreButton.anchor.setTo(0.5, 0.5);
         settingsButton.anchor.setTo(0.5, 0.5);
@@ -64,8 +64,6 @@ FindX.StartMenu.prototype = {
             }
                    
         });
-        
-        
     
 	},
 	/**
@@ -76,12 +74,23 @@ FindX.StartMenu.prototype = {
 	startGame: function (pointer) {
         this.ding.play();
         this.startSound.stop();
-		this.state.start('Game');
-        
+        this.add.tween(startPrompt.scale).to( { x: .8, y: .8 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+            function() {
+                this.state.start('Game');
+            }, this);    
 	},
     
+    /*
+     * Tween the leaderBoard button
+     * then call the settings Menu thereafter
+     */
+    highScoreTween: function() {
+        this.add.tween(highScoreButton.scale).to( { x: .8, y: .8 }, 50, 
+                Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(this.highScore, this); 
+    },
+    
     /**
-     * Function call when High Score Button is click, includes an online 
+     * Function call when LeaderBoard Button is click, includes an online 
      * leaderboard that pull and posts from mongodb database
      * @method highScore Button with a pointer
      * @param {} pointer Points to a window created for leaderboard
@@ -132,25 +141,25 @@ FindX.StartMenu.prototype = {
         titleIndex.x = 0;  
         titleIndex.y = -150;   
         
-        for(var i = 0; i < 10; i++, yPos += 25 ) {
+        for(var i = 0; i < 10; i++, yPos += 28 ) {
             
             if (localStorage.getItem('topName' + i) != null) {
                 //rank
-                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 25);
+                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 27);
                 sprite.addChild(rank[i]);
                 rank[i].anchor.setTo(0.5, 0.5);
                 rank[i].x = -125;  
                 rank[i].y = yPos;
 
                 //name
-                name[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topName' + i), 25);
+                name[i] = this.add.bitmapText(0 , 0,'boardfont',  "" + localStorage.getItem('topName' + i), 27);
                 sprite.addChild(name[i]);
                 name[i].anchor.setTo(0.5, 0.5);
                 name[i].x = -5;  
                 name[i].y = yPos;
 
                 //score
-                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topScore' + i), 25);
+                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topScore' + i), 27);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
                 score[i].x = 120;  
@@ -159,21 +168,21 @@ FindX.StartMenu.prototype = {
             }else {
                 
                 //rank
-                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 25);
+                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 27);
                 sprite.addChild(rank[i]);
                 rank[i].anchor.setTo(0.5, 0.5);
                 rank[i].x = -125;  
                 rank[i].y = yPos;
 
                 //name
-                name[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 25);
+                name[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 27);
                 sprite.addChild(name[i]);
                 name[i].anchor.setTo(0.5, 0.5);
                 name[i].x = -5;  
                 name[i].y = yPos;
 
                 //score
-                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 25);
+                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 27);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
                 score[i].x = 120;  
@@ -190,11 +199,15 @@ FindX.StartMenu.prototype = {
         
         backToMenu.events.onInputDown.add(
             function() {
-                startPrompt.inputEnabled = true;
-                highScoreButton.inputEnabled = true;
-                settingsButton.inputEnabled = true;
-                sprite.destroy(); 
-                backToMenu.destroy();
+                this.add.tween(backToMenu.scale).to( { x: 1.3, y: 1.3 }, 100, 
+                    Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+                    function() {
+                        startPrompt.inputEnabled = true;
+                        highScoreButton.inputEnabled = true;
+                        settingsButton.inputEnabled = true;
+                        sprite.destroy(); 
+                        backToMenu.destroy();
+                    }, this)
                 
             }
             ,this);
@@ -253,19 +266,30 @@ FindX.StartMenu.prototype = {
         
         // click to go back to menu
         backToMenu.events.onInputDown.add(
+                   
             function() {
-                startPrompt.inputEnabled = true;
-                highScoreButton.inputEnabled = true;
-                settingsButton.inputEnabled = true;
-                soundText.destroy();
-                this.soundToggle.destroy();
-                sprite.destroy();
-                backToMenu.destroy();
-            }
-            ,this);
+                this.add.tween(backToMenu.scale).to( { x: 1.3, y: 1.3 }, 100, 
+                    Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+                        function() {
+                            startPrompt.inputEnabled = true;
+                            highScoreButton.inputEnabled = true;
+                            settingsButton.inputEnabled = true;
+                            soundText.destroy();
+                            this.soundToggle.destroy();
+                            sprite.destroy();
+                            backToMenu.destroy();
+                        }, this)
+                }
+                ,this);
     },
     
-        
-        
+    /*
+     * Tween the settings button
+     * then call the settings Menu thereafter
+     */
+    settingsTween: function() {
+        this.add.tween(settingsButton.scale).to( { x: .8, y: .8 }, 50, 
+                Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(this.settingsMenu, this); 
+    }
      
 };
