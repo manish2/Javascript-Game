@@ -76,8 +76,6 @@ FindX.Game = function(game) {
     //sounds
     this.wrongding;
     this.coinding; 
-    
-    this.highScoreIsCheck;
 };
 
 
@@ -113,7 +111,6 @@ FindX.Game.prototype = {
         this.difficultyTracker = 0;
         this.scoreMultiplier = 1;
         this.setChoiceReturn = 1;
-        
         
         this.highScoreIsCheck = false;
         
@@ -586,13 +583,14 @@ FindX.Game.prototype = {
             this.skipButton.frame = 0;  
         }
         
+        //highscore set
         
-        if(this.score > this.highScore && this.highScoreIsCheck == false) {
-            
-            this.highScoreIsCheck = true;
-        
-            this.newHighScore();
-         }
+//        if(this.score > this.highScore && this.highScoreIsCheck == false) {
+//            
+//            this.highScoreIsCheck = true;
+//        
+//            this.newHighScore();
+//         }
 
             this.difficultySetter();
        

@@ -69,23 +69,38 @@ FindX.GameOver.prototype = {
 		
 	},
     
+    
     /**
     *  This function is a pointer to a database that stores your end score. 
     */
     submit: function(pointer) {
         
-        this.add.tween(submitPrompt.scale).to( { x: 1.1, y: 1.1 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true);
+        this.add.tween(submitPrompt.scale).to( { x: 1.1, y: 1.1 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true)
+        .onComplete.addOnce(
+            function() {
         
-         if(this.isSubmitted == false) { 
-             
-             this.isSubmitted = true;
-                var scoreTosubmit = parseInt(localStorage.getItem('yourscore'));
-                 
-                $.ajax({ url: "https://api.mongolab.com/api/1/databases/findx/collections/HighScore?apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1",
-                      data: JSON.stringify( { "name" : localStorage.getItem('name'), "score": scoreTosubmit} ),
-                      type: 'POST',
-                      contentType: "application/json" 
-                });
-         }
+                if(this.isSubmitted == false) { 
+
+                    var result = confirm("Click OK to submit your score.");
+                        if(result == true){
+                            
+                            console.log("inside submitted");
+                            
+                             this.isSubmitted = true;
+                             var scoreTosubmit = parseInt(localStorage.getItem('yourscore'));
+
+                            $.ajax({ url: "https://api.mongolab.com/api/1/databases/findx/collections/HighScore?apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1",
+                                      data: JSON.stringify( { "name" : localStorage.getItem('name'), "score": scoreTosubmit} ),
+                                      type: 'POST',
+                                      contentType: "application/json" 
+                             });
+
+                        } 
+                } else {
+                    
+                    alert("Your score has been submitted");
+                    
+                }
+            }, this);
     }
 };

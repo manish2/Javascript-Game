@@ -22,10 +22,9 @@ FindX.StartMenu = function(game) {
     this.ding;
     this.startSound;
     this.settingsButton;
+    this.achievementButton;
     this.onSound;
     this.soundToggle;
-    
-  
 }
 
 
@@ -43,12 +42,16 @@ FindX.StartMenu.prototype = {
         this.startSound.play('', 0, 0.8, true);
 		this.add.image(0, 0, 'titlescreen');
         this.logo = this.add.image(this.world.centerX - 230, this.world.centerY - 400, 'titlelogo');
+        
         highScoreButton = this.add.button(this.world.centerX, this.world.centerY+150, 'HighScore', this.highScoreTween, this, 1 , 0);
 		startPrompt = this.add.button(this.world.centerX, this.world.centerY+80, 'PlayButton', this.startGame, this, 1 , 0);
-        settingsButton = this.add.button(this.world.centerX, this.world.centerY+230, 'Settings', this.settingsTween, this, 0 , 1);
+        settingsButton = this.add.button(this.world.centerX, this.world.centerY+300, 'Settings', this.settingsTween, this, 0 , 1);
+        achievementButton = this.add.button(this.world.centerX, this.world.centerY+220, 'Achievement', this.achieveTween, this, 1 , 0);
+        
         startPrompt.anchor.setTo(0.5, 0.5);
         highScoreButton.anchor.setTo(0.5, 0.5);
         settingsButton.anchor.setTo(0.5, 0.5);
+        achievementButton.anchor.setTo(0.5, 0.5);
         
         $.ajax({
            url:  'https://api.mongolab.com/api/1/databases/findx/collections/HighScore?s={\"score\":-1}&l=10&apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1',
@@ -66,6 +69,114 @@ FindX.StartMenu.prototype = {
         });
     
 	},
+    
+    /**
+    * Creates the achievement display
+    *
+    */
+    achieve: function() {
+        
+        startPrompt.inputEnabled = false;
+        highScoreButton.inputEnabled = false;
+        settingsButton.inputEnabled = false;
+        achievementButton.inputEnabled = false;
+        
+        var sprite = this.add.image(this.world.centerX, this.world.centerY+10, 'settingsBG');
+        sprite.anchor.setTo(0.5, 0.5);
+        
+        var achieveText = this.add.bitmapText(0 , 0,'gamefont', 'Achievements', 40);
+        sprite.addChild(achieveText);
+        achieveText.anchor.setTo(0.5, 0.5);
+        achieveText.x = 0;  
+        achieveText.y = -200;
+        
+        //achieve 1 ---------------
+        var lockimg1 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+        sprite.addChild(lockimg1);
+        lockimg1.x = -120;
+        lockimg1.y = -100;
+              
+        var line1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+        sprite.addChild(line1);
+        line1.x = -160;
+        line1.y = -90;
+        
+        //achieve 2 ------------------
+        var lockimg2 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+        sprite.addChild(lockimg2);
+        lockimg2.x = -120;
+        lockimg2.y = -10;
+              
+        var line2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+        sprite.addChild(line2);
+        line2.x = -160;
+        line2.y = 0;
+        
+        //achieve 3 -----------------
+        var lockimg3 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+        sprite.addChild(lockimg3);
+        lockimg3.x = -120;
+        lockimg3.y = 80;
+              
+        var line3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+        sprite.addChild(line3);
+        line3.x = -160;
+        line3.y = 90;
+        
+        
+        backToMenu = this.add.bitmapText(0 , 0,'gamefont', 'back', 30);
+        backToMenu.inputEnabled = true;
+        
+        sprite.addChild(backToMenu);
+        backToMenu.anchor.setTo(0.5, 0.5);
+        backToMenu.x = 10;
+        backToMenu.y = 200;
+        
+         backToMenu.events.onInputDown.add(
+                   
+            function() {
+                this.add.tween(backToMenu.scale).to( { x: 1.3, y: 1.3 }, 100, 
+                    Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+                        function() {
+                            startPrompt.inputEnabled = true;
+                            highScoreButton.inputEnabled = true;
+                            settingsButton.inputEnabled = true;
+                            achievementButton.inputEnabled = true;
+                            sprite.destroy();
+                            backToMenu.destroy();
+                        }, this)
+                }
+                ,this);
+        
+    },
+    
+    /**
+    * Creates the lock icon
+    * @param xLoc the location of the icon
+    * @return returns the lock icon with specified location
+    */
+    createLock: function(xloc, yloc, key) {
+        
+        var lockimg = this.add.image(xloc, yloc, key);
+        lockimg.width = 75;
+        lockimg.height = 75;    
+        lockimg.anchor.setTo(0.5, 0.5);
+       
+          
+        return lockimg;
+        
+    },
+    
+    /**
+    * Function call when achievement is click
+    * adds a tween to the achievement button
+    */
+    achieveTween: function() {     
+        
+        this.add.tween(achievementButton.scale).to( { x: .8, y: .8 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+            this.achieve, this);
+        
+    },
 	/**
 	 * Function call when Play Button is click
 	 * @method startGame Button with a pointer
@@ -100,6 +211,7 @@ FindX.StartMenu.prototype = {
         startPrompt.inputEnabled = false;
         highScoreButton.inputEnabled = false;
         settingsButton.inputEnabled = false;
+        achievementButton.inputEnabled = false;
         
         var score = [];
         var name = [];
@@ -205,6 +317,7 @@ FindX.StartMenu.prototype = {
                         startPrompt.inputEnabled = true;
                         highScoreButton.inputEnabled = true;
                         settingsButton.inputEnabled = true;
+                        achievementButton.inputEnabled = true;
                         sprite.destroy(); 
                         backToMenu.destroy();
                     }, this)
@@ -222,6 +335,8 @@ FindX.StartMenu.prototype = {
         startPrompt.inputEnabled = false;
         highScoreButton.inputEnabled = false;
         settingsButton.inputEnabled = false;
+        achievementButton.inputEnabled = false;
+        
         // background Sprite
         var sprite = this.add.image(this.world.centerX, this.world.centerY+10, 'settingsBG');
         sprite.anchor.setTo(0.5, 0.5);
@@ -274,6 +389,7 @@ FindX.StartMenu.prototype = {
                             startPrompt.inputEnabled = true;
                             highScoreButton.inputEnabled = true;
                             settingsButton.inputEnabled = true;
+                            achievementButton.inputEnabled = true;
                             soundText.destroy();
                             this.soundToggle.destroy();
                             sprite.destroy();

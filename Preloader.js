@@ -28,12 +28,12 @@ FindX.Preloader.prototype = {
         this.load.spritesheet('PlayButton', 'images/play_spritesheet.png', 159, 82);
         this.load.spritesheet('Settings', 'images/Settings.png', 273, 82);
         this.load.spritesheet('HighScore', 'images/leaderboardButton.png', 406, 68);
+        this.load.spritesheet('Achievement', 'images/achievement.png', 437, 62);
         this.load.audio('select_audio', 'audio/select.mp3');
         this.load.audio('wrong_audio', 'audio/argh.mp3');
         this.load.audio('coin_audio', 'audio/coinbag.mp3');
         this.load.audio('start_audio', 'audio/bgLoop.mp3');
         this.load.image('settingsBG', 'images/settingsBG.jpg');
-        this.load.image('pause','images/PAUSE.png');
         this.load.spritesheet('skip','images/skipSprite.png', 142, 142);
         this.load.spritesheet('buttonChoice','images/colorButtons.png', 167, 167);
         this.load.image('loot','images/coinPouch.png');
@@ -44,6 +44,7 @@ FindX.Preloader.prototype = {
         this.load.image('submitButton','images/submitButton.png');
         this.load.image('correct','images/green.png');
         this.load.image('wrong','images/wrong.png');
+        this.load.image('lock','images/lock.png');
 	},
 	
 
