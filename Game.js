@@ -541,8 +541,8 @@ FindX.Game.prototype = {
         
         if(this.userAns == true) { 
             var style = { font: "52px Comic Sans MS", fill: "rgb(12, 204, 71)", align: "center", weight: "bold" };
-            var text = this.add.text(this.world.centerX - 40, 60, "+2", style);
-            text.alpha = 0;
+            var timerText = this.add.text(this.world.centerX - 40, 60, "+2", style);
+            timerText.alpha = 0;
             
             this.timer += this.timerConstant; 
             this.consecutiveAns++;
@@ -550,16 +550,19 @@ FindX.Game.prototype = {
             this.coinding.play();
             this.showScore.setText('' + this.score);
             this.userAns = false; 
-            this.add.tween(text).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, true);
-        } else if(this.userFalseAns == true) { 
-            var style = { font: "52px Comic Sans MS", fill: "rgb(227, 8, 8)", align: "center", weight: "bold" };
-            var text = this.add.text(this.world.centerX - 40, 60, "-4", style);
+            var t = this.add.tween(timerText).to({y: timerText.y-30, alpha: 1 }, 900, Phaser.Easing.Linear.None, true, 0, 0, false); 
+            t.onComplete.add(function() {timerText.destroy();});  
+        } else if(this.userFalseAns == true) {
             
-            text.alpha = 0;
+            var style = { font: "52px Comic Sans MS", fill: "rgb(227, 8, 8)", align: "center", weight: "bold" };
+            var timerText = this.add.text(this.world.centerX - 40, 60, "-4", style);
+            
+            timerText.alpha = 0;
             this.timer -= (this.timerConstant + 2); 
             this.userFalseAns = false;
             this.wrongding.play();
-            this.add.tween(text).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, true);
+             var t = this.add.tween(timerText).to({y: timerText.y-30, alpha: 1 }, 900, Phaser.Easing.Linear.None, true, 0, 0, false); 
+            t.onComplete.add(function() {timerText.destroy();});  
              
         } 
         
