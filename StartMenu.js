@@ -23,6 +23,7 @@ FindX.StartMenu = function(game) {
     this.startSound;
     this.settingsButton;
     this.achievementButton;
+    this.crewButton;
     this.onSound;
     this.soundToggle;
 }
@@ -38,7 +39,7 @@ FindX.StartMenu.prototype = {
         this.onSound = true;
         this.stage.disableVisibilityChange = false;
         this.ding = this.add.audio('select_audio');
-        this.startSound = this.add.audio('start_audio');
+        this.startSound = this.add.audio('start_audio');    
         this.startSound.play('', 0, 0.8, true);
 		this.add.image(0, 0, 'titlescreen');
         this.logo = this.add.image(this.world.centerX - 230, this.world.centerY - 400, 'titlelogo');
@@ -47,11 +48,13 @@ FindX.StartMenu.prototype = {
 		startPrompt = this.add.button(this.world.centerX, this.world.centerY+80, 'PlayButton', this.startGame, this, 1 , 0);
         settingsButton = this.add.button(this.world.centerX, this.world.centerY+300, 'Settings', this.settingsTween, this, 0 , 1);
         achievementButton = this.add.button(this.world.centerX, this.world.centerY+220, 'Achievement', this.achieveTween, this, 1 , 0);
+        crewButton = this.add.button(this.world.centerX, this.world.centerY+370, 'Crew', this.crewTween, this, 0 , 1);
         
         startPrompt.anchor.setTo(0.5, 0.5);
         highScoreButton.anchor.setTo(0.5, 0.5);
         settingsButton.anchor.setTo(0.5, 0.5);
         achievementButton.anchor.setTo(0.5, 0.5);
+        crewButton.anchor.setTo(0.5, 0.5);
         
         $.ajax({
            url:  'https://api.mongolab.com/api/1/databases/findx/collections/HighScore?s={\"score\":-1}&l=10&apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1',
@@ -149,6 +152,134 @@ FindX.StartMenu.prototype = {
                 ,this);
         
     },
+    
+    
+    /**
+    * Creates the credit screen.
+    *
+    */
+    crewTween: function() {
+        this.startSound.stop();
+        this.startSound = this.add.audio('credits_audio');    
+        this.startSound.play('', 0, 0.8, true);
+        startPrompt.inputEnabled = false;
+        highScoreButton.inputEnabled = false;
+        settingsButton.inputEnabled = false;
+        achievementButton.inputEnabled = false;
+        crewButton.inputEnabled = false;
+        
+        var sprite = this.add.image(this.world.centerX, this.world.centerY+200, 'crewBG');
+        sprite.anchor.setTo(0.5, 0.5);
+        sprite.width = 500;
+        sprite.height = 500;
+        
+        var crew1Text = this.add.bitmapText(0 , 0,'gamefont', 'Manish', 120);
+        sprite.addChild(crew1Text);
+        crew1Text.anchor.setTo(0.5, 0.5);
+        crew1Text.x = -50;  
+        crew1Text.y = -420;
+        
+        crew1Avatar = this.add.image(0 , 0,'Manish');
+        sprite.addChild(crew1Avatar);
+        crew1Avatar.anchor.setTo(0.5, 0.5);
+        
+        crew1Avatar.width = 400;
+        crew1Avatar.height = 300;
+        crew1Avatar.x = -500;
+        crew1Avatar.y = -420;
+        
+        var crew2Text = this.add.bitmapText(0 , 0,'gamefont', 'Luda', 120);
+        sprite.addChild(crew2Text);
+        crew2Text.anchor.setTo(0.5, 0.5);
+        crew2Text.x = -120;  
+        crew2Text.y = -220;
+        
+        crew2Avatar = this.add.image(0 , 0,'Luda');
+        sprite.addChild(crew2Avatar);
+        crew2Avatar.anchor.setTo(0.5, 0.5);
+        
+        crew2Avatar.width = 200;
+        crew2Avatar.height = 200;
+        crew2Avatar.x = 600;
+        crew2Avatar.y = -220;
+        
+        var crew3Text = this.add.bitmapText(0 , 0,'gamefont', 'Rupinder', 120);
+        sprite.addChild(crew3Text);
+        crew3Text.anchor.setTo(0.5, 0.5);
+        crew3Text.x = 0;  
+        crew3Text.y = -30;
+        
+        crew3Avatar = this.add.image(0 , 0,'Rupinder');
+        sprite.addChild(crew3Avatar);
+        crew3Avatar.anchor.setTo(0.5, 0.5);
+        
+        crew3Avatar.width = 170;
+        crew3Avatar.height = 200;
+        crew3Avatar.x = -590;
+        crew3Avatar.y = 15;
+        
+        var crew4Text = this.add.bitmapText(0 , 0,'gamefont', 'Jacky', 120);
+        sprite.addChild(crew4Text);
+        crew4Text.anchor.setTo(0.5, 0.5);
+        crew4Text.x = -100;  
+        crew4Text.y = 200;
+        
+        crew4Avatar = this.add.image(0 , 0,'Jacky');
+        sprite.addChild(crew4Avatar);
+        crew4Avatar.anchor.setTo(0.5, 0.5);
+        
+        crew4Avatar.width = 175;
+        crew4Avatar.height = 175;
+        crew4Avatar.x = 600;
+        crew4Avatar.y = 210;
+        
+        var crew5Text = this.add.bitmapText(0 , 0,'gamefont', 'Jox', 120);
+        sprite.addChild(crew5Text);
+        crew5Text.anchor.setTo(0.5, 0.5);
+        crew5Text.x = -180;  
+        crew5Text.y = 400;
+        
+        crew5Avatar = this.add.image(0 , 0,'Jox');
+        sprite.addChild(crew5Avatar);
+        crew5Avatar.anchor.setTo(0.5, 0.5);
+        
+        crew5Avatar.width = 200;
+        crew5Avatar.height = 200;
+        crew5Avatar.x = -600;
+        crew5Avatar.y = 400;
+        
+        backToMenu = this.add.image(0 , 0,'close');
+        backToMenu.inputEnabled = true;
+        sprite.addChild(backToMenu);
+        backToMenu.anchor.setTo(0.5, 0.5);
+        
+        backToMenu.width = 200;
+        backToMenu.height = 200;
+        backToMenu.x = 555;
+        backToMenu.y = -580;
+        
+         backToMenu.events.onInputDown.add(
+                   
+            function() {
+                this.add.tween(backToMenu.scale).to( { x: 1.3, y: 1.3 }, 100, 
+                    Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+                        function() {
+                            this.startSound.stop();
+                            this.startSound = this.add.audio('start_audio');    
+                            this.startSound.play('', 0, 0.8, true);
+                            startPrompt.inputEnabled = true;
+                            highScoreButton.inputEnabled = true;
+                            settingsButton.inputEnabled = true;
+                            achievementButton.inputEnabled = true;
+                            crewButton.inputEnabled = true;
+                            sprite.destroy();
+                            backToMenu.destroy();
+                        }, this)
+                }
+                ,this);
+        
+    },
+    
     
     /**
     * Creates the lock icon

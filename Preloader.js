@@ -28,8 +28,11 @@ FindX.Preloader.prototype = {
         this.load.spritesheet('PlayButton', 'images/play_spritesheet.png', 159, 82);
         this.load.spritesheet('Settings', 'images/Settings.png', 273, 82);
         this.load.spritesheet('HighScore', 'images/leaderboardButton.png', 406, 68);
-        this.load.spritesheet('Achievement', 'images/achievement.png', 437, 62);       
+        this.load.spritesheet('Achievement', 'images/achievement.png', 437, 62);
+        this.load.spritesheet('Crew', 'images/crew.png', 179, 67);
         this.load.image('settingsBG', 'images/settingsBG.jpg');
+        this.load.image('crewBG', 'images/crewBG.png');
+        this.load.image('close', 'images/close.png');
         this.load.spritesheet('skip','images/skipSprite.png', 142, 142);
         this.load.spritesheet('buttonChoice','images/colorButtons.png', 167, 167);
         this.load.image('loot','images/coinPouch.png');
@@ -40,11 +43,17 @@ FindX.Preloader.prototype = {
         this.load.image('submitButton','images/submitButton.png');
         this.load.image('correct','images/green.png');
         this.load.image('wrong','images/wrong.png');
-        this.load.image('lock','images/lock.png');     
+        this.load.image('lock','images/lock.png');
+        this.load.image('Manish','images/Manish.gif');
+        this.load.image('Rupinder','images/Rupinder.png');
+        this.load.image('Luda','images/Luda.png');
+        this.load.image('Jacky','images/Jacky.png');
+        this.load.image('Jox','images/Jox.png');
         this.load.audio('select_audio', 'audio/select.mp3');
         this.load.audio('wrong_audio', 'audio/argh.mp3');
         this.load.audio('coin_audio', 'audio/coinbag.mp3');
         this.load.audio('start_audio', 'audio/bgLoop.mp3');
+        this.load.audio('credits_audio', 'audio/credits.mp3');
 	},
 	
 
