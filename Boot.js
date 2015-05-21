@@ -59,6 +59,11 @@ FindX.Boot.prototype = {
      */
     create: function() {
        
+        if(localStorage.getItem('tempID') == null){
+          var userID = this.game.rnd.integerInRange(100000, 999999);
+            localStorage.setItem('tempID', userID);
+            console.log(userID);
+        }
                      
             for(var i = 0; i < 10; i++ ) {
                 localStorage.removeItem('topName' + i);

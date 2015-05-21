@@ -56,6 +56,7 @@ FindX.Game = function(game) {
     this.showTimer;
     this.timeEvents;
     this.score;
+    this.scoreConstant;
     this.showScore;
     this.userAns; 
     this.userFalseAns; 
@@ -76,6 +77,10 @@ FindX.Game = function(game) {
     //sounds
     this.wrongding;
     this.coinding; 
+    
+    this.recordScore;
+    
+    this.isTimerRecorded;
 };
 
 
@@ -99,11 +104,12 @@ FindX.Game.prototype = {
         this.timer = 10; 
         this.userAns = false; 
         this.userFalseAns = false; 
-        this.timerConstant = 3;
+        this.timerConstant = 4;
         this.consecutiveAns = 0;
         this.coins = 0;
         this.addcoin = 1;
         this.score = 0;
+        this.scoreConstant = 10;
         this.minTopNumber = 0;
         this.maxTopNumber = 9;
         this.minBottomNumber = 0;
@@ -111,8 +117,13 @@ FindX.Game.prototype = {
         this.difficultyTracker = 0;
         this.scoreMultiplier = 1;
         this.setChoiceReturn = 1;
+        this.isTimerRecorded = false;
         
         this.highScoreIsCheck = false;
+         
+        if(localStorage.getItem('achieve') == null){
+            localStorage.setItem('achieve', 0);
+        }
         
         if(localStorage.getItem('highscore') != null) {
             this.highScore =   localStorage.getItem('highscore');
@@ -149,6 +160,33 @@ FindX.Game.prototype = {
         this.skipButton.height = 100;
         this.skipButton.width = 100;
          
+    },
+    
+    /**
+    * This tracks the achievement after game over
+    *
+    */
+    achieveTracker: function(){
+        console.log("inside Achieve Tracker");
+        var curAchieve;
+        console.log("this.recordScore ", this.recordScore);
+        
+        if(this.recordScore >= 1000 /*&& parseInt(localStorage.getItem("achieve")) >= 2*/){
+            curAchieve = 3;
+            localStorage.setItem("achieve",  curAchieve);
+            console.log("inside 1000 score ", this.score);
+            
+        }else if(this.recordScore >= 500 /*&& parseInt(localStorage.getItem("achieve")) >= 1*/){
+            curAchieve = 2;
+            localStorage.setItem("achieve", curAchieve);
+            console.log("has scored 500");
+        } else if(this.recordScore >= 250 /*&& parseInt(localStorage.getItem("achieve")) == 0*/){
+            
+            console.log("has scored 250");
+            curAchieve = 1;
+            localStorage.setItem("achieve", curAchieve);
+        }
+        
     },
      
 	/**
@@ -234,7 +272,7 @@ FindX.Game.prototype = {
 	 */ 
     difficultySetter : function() {
         
-        if(this.difficultyTracker >= 25){
+        if(this.difficultyTracker >= 50){
                     
             this.minTopNumber = 10;
             this.maxTopNumber = 99;
@@ -242,7 +280,7 @@ FindX.Game.prototype = {
             this.maxBottomNumber = 99;
             this.scoreMultiplier = 1.5;
         }
-        else if(this.difficultyTracker >= 10) {  
+        else if(this.difficultyTracker >= 20) {  
                
             this.minTopNumber = 10;
             this.maxTopNumber = 99;
@@ -525,7 +563,14 @@ FindX.Game.prototype = {
            
         
          if(this.timer <= 0){
+             
+             this.choice1.inputEnabled = false;
+             this.choice2.inputEnabled = false;
+             this.choice3.inputEnabled = false;
+             
+             this.recordScore = this.score;
              localStorage.setItem("yourscore", this.score);
+         
             
                 if(this.highScore !== null){
                    if (this.score > this.highScore) {
@@ -535,35 +580,36 @@ FindX.Game.prototype = {
                       localStorage.setItem("highscore", this.score );            
                 }
              
+             this.achieveTracker();
 		     this.state.start('GameOver');
 
         }
+        
+
         
         if(this.userAns == true) { 
             var style = { font: "52px Comic Sans MS", fill: "rgb(12, 204, 71)", align: "center", weight: "bold" };
             var timerText = this.add.text(this.world.centerX - 40, 60, "+2", style);
             timerText.alpha = 0;
             
-            this.timer += this.timerConstant; 
+            this.timer += this.timerConstant - 2; 
             this.consecutiveAns++;
-            this.score += Math.floor((10 * this.scoreMultiplier));
+            this.score += Math.floor((this.scoreConstant * this.scoreMultiplier));
             this.coinding.play();
             this.showScore.setText('' + this.score);
             this.userAns = false; 
             var t = this.add.tween(timerText).to({y: timerText.y-30, alpha: 1 }, 900, Phaser.Easing.Linear.None, true, 0, 0, false); 
             t.onComplete.add(function() {timerText.destroy();});  
-        } else if(this.userFalseAns == true) {
-            
+        } else if(this.userFalseAns == true) { 
             var style = { font: "52px Comic Sans MS", fill: "rgb(227, 8, 8)", align: "center", weight: "bold" };
             var timerText = this.add.text(this.world.centerX - 40, 60, "-4", style);
             
             timerText.alpha = 0;
-            this.timer -= (this.timerConstant + 2); 
+            this.timer -= (this.timerConstant); 
             this.userFalseAns = false;
             this.wrongding.play();
-             var t = this.add.tween(timerText).to({y: timerText.y-30, alpha: 1 }, 900, Phaser.Easing.Linear.None, true, 0, 0, false); 
+            var t = this.add.tween(timerText).to({y: timerText.y-30, alpha: 1 }, 900, Phaser.Easing.Linear.None, true, 0, 0, false); 
             t.onComplete.add(function() {timerText.destroy();});  
-             
         } 
         
         // added consecutive answer to 3 then add a coin after 
@@ -585,15 +631,7 @@ FindX.Game.prototype = {
         }else if(this.coins >= 5) {
             this.skipButton.frame = 0;  
         }
-        
-        //highscore set
-        
-//        if(this.score > this.highScore && this.highScoreIsCheck == false) {
-//            
-//            this.highScoreIsCheck = true;
-//        
-//            this.newHighScore();
-//         }
+    
 
             this.difficultySetter();
        

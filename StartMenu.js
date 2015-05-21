@@ -23,9 +23,11 @@ FindX.StartMenu = function(game) {
     this.startSound;
     this.settingsButton;
     this.achievementButton;
-    this.crewButton;
     this.onSound;
     this.soundToggle;
+    this.newIcon;
+    this.iconAppeared;
+    this.crewButton;
 }
 
 
@@ -39,22 +41,23 @@ FindX.StartMenu.prototype = {
         this.onSound = true;
         this.stage.disableVisibilityChange = false;
         this.ding = this.add.audio('select_audio');
-        this.startSound = this.add.audio('start_audio');    
+        this.startSound = this.add.audio('start_audio');
         this.startSound.play('', 0, 0.8, true);
 		this.add.image(0, 0, 'titlescreen');
         this.logo = this.add.image(this.world.centerX - 230, this.world.centerY - 400, 'titlelogo');
+        this.iconAppeared = false;
         
         highScoreButton = this.add.button(this.world.centerX, this.world.centerY+150, 'HighScore', this.highScoreTween, this, 1 , 0);
 		startPrompt = this.add.button(this.world.centerX, this.world.centerY+80, 'PlayButton', this.startGame, this, 1 , 0);
         settingsButton = this.add.button(this.world.centerX, this.world.centerY+300, 'Settings', this.settingsTween, this, 0 , 1);
         achievementButton = this.add.button(this.world.centerX, this.world.centerY+220, 'Achievement', this.achieveTween, this, 1 , 0);
-        crewButton = this.add.button(this.world.centerX, this.world.centerY+370, 'Crew', this.crewTween, this, 0 , 1);
+        crewButton = this.add.button(this.world.centerX, this.world.centerY+370, 'Crew', this.crewTweenFirst, this, 0 , 1);
         
         startPrompt.anchor.setTo(0.5, 0.5);
         highScoreButton.anchor.setTo(0.5, 0.5);
         settingsButton.anchor.setTo(0.5, 0.5);
         achievementButton.anchor.setTo(0.5, 0.5);
-        crewButton.anchor.setTo(0.5, 0.5);
+         crewButton.anchor.setTo(0.5, 0.5);
         
         $.ajax({
            url:  'https://api.mongolab.com/api/1/databases/findx/collections/HighScore?s={\"score\":-1}&l=10&apiKey=CDvbQJBiWFpyu08aN2PYkWAqi2Q3m0E1',
@@ -63,14 +66,45 @@ FindX.StartMenu.prototype = {
             cache: false,
             success: function(data) {
                      
-                for(var i = 0; i < 10; i++ ) {
+                for(var i = 0; i < data.length; i++ ) {
                     localStorage.setItem('topName' + i , data[i].name);
                     localStorage.setItem('topScore' + i , data[i].score);
+                    localStorage.setItem('trophy' + i, data[i].achieve);
                 }       
             }
                    
         });
-    
+        
+        if(localStorage.getItem('isViewed') == null){
+            localStorage.setItem('isViewed', 0);  
+        }
+        
+        if(parseInt(localStorage.getItem('achieve')) ==  1 && parseInt(localStorage.getItem('isViewed')) == 0){
+             this.iconAppeared = true;
+             this.newIcon =  this.add.image(this.world.centerX - 210,  this.world.centerY+ 220, 'new'); 
+             this.newIcon.anchor.setTo(0.5, 0.5);
+             this.newIcon.alpha = 0;
+             
+             this.add.tween(this.newIcon).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 1000, true);
+           
+        } else if (parseInt(localStorage.getItem('achieve')) ==  2 && parseInt(localStorage.getItem('isViewed')) == 1){
+            this.iconAppeared = true;
+             this.newIcon =  this.add.image(this.world.centerX - 210,  this.world.centerY+ 220, 'new'); 
+             this.newIcon.anchor.setTo(0.5, 0.5);
+             this.newIcon.alpha = 0;
+
+             this.add.tween(this.newIcon).to( { alpha: 1 },700, Phaser.Easing.Linear.None, true, 0, 1000, true);
+           
+            
+        } else if (parseInt(localStorage.getItem('achieve')) ==  3 && parseInt(localStorage.getItem('isViewed')) == 2){
+            this.iconAppeared = true;
+            this.newIcon =  this.add.image(this.world.centerX - 210,  this.world.centerY+ 220, 'new'); 
+             this.newIcon.anchor.setTo(0.5, 0.5);
+             this.newIcon.alpha = 0;
+
+             this.add.tween(this.newIcon).to( { alpha: 1 }, 700, Phaser.Easing.Linear.None, true, 0, 1000, true);
+           
+        }
 	},
     
     /**
@@ -83,48 +117,201 @@ FindX.StartMenu.prototype = {
         highScoreButton.inputEnabled = false;
         settingsButton.inputEnabled = false;
         achievementButton.inputEnabled = false;
+        crewButton.inputEnabled = false;
+        
+        if(this.iconAppeared){
+            this.iconAppeared = false;
+            this.newIcon.destroy();
+        }
         
         var sprite = this.add.image(this.world.centerX, this.world.centerY+10, 'settingsBG');
         sprite.anchor.setTo(0.5, 0.5);
         
-        var achieveText = this.add.bitmapText(0 , 0,'gamefont', 'Achievements', 40);
+        var achieveText = this.add.bitmapText(0 , 0,'gamefont', 'Achievements', 45);
         sprite.addChild(achieveText);
         achieveText.anchor.setTo(0.5, 0.5);
         achieveText.x = 0;  
-        achieveText.y = -200;
+        achieveText.y = -250;
         
         //achieve 1 ---------------
-        var lockimg1 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
-        sprite.addChild(lockimg1);
-        lockimg1.x = -120;
-        lockimg1.y = -100;
-              
-        var line1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+        if(parseInt(localStorage.getItem('achieve')) ==  1){
+            
+            localStorage.setItem('isViewed', 1);
+            
+            
+            
+            var bronzeImg = this.add.image(this.world.centerX, this.world.centerY+10, 'bronze');
+            sprite.addChild(bronzeImg);
+            bronzeImg.x = -170;
+            bronzeImg.y = -155;
+            bronzeImg.width = 100;
+            bronzeImg.height = 100;
+            
+            var unlocktext1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED PRO TROPHY', 20);
+            sprite.addChild(unlocktext1);
+            unlocktext1.x = -60;
+            unlocktext1.y = -120;
+            
+             //lock for silver achievement
+            var lockimg2 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            var locktext2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'Reach a score above\n 500 to unlock', 20);
+            
+            sprite.addChild(locktext2);
+            locktext2.x = -70;
+            locktext2.y = -10;
+            sprite.addChild(lockimg2);
+            lockimg2.x = -120;
+            lockimg2.y = 10;
+            
+            //lock for gold achievement
+            var lockimg3 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            var locktext3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '??  ??   ??', 30);
+            
+            sprite.addChild(locktext3);
+            locktext3.x = -70;
+            locktext3.y = 100;
+            sprite.addChild(lockimg3);
+            lockimg3.x = -120;
+            lockimg3.y = 120;
+    
+        }else if(parseInt(localStorage.getItem('achieve')) ==  2){
+            
+            localStorage.setItem('isViewed', 2);
+            
+            
+            //display bronze
+            var bronzeImg = this.add.image(this.world.centerX, this.world.centerY+10, 'bronze');
+            sprite.addChild(bronzeImg);
+            bronzeImg.x = -170;
+            bronzeImg.y = -155;
+            bronzeImg.width = 100;
+            bronzeImg.height = 100;
+            
+            var unlocktext1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED PRO TROPHY', 20);
+            sprite.addChild(unlocktext1);
+            unlocktext1.x = -60;
+            unlocktext1.y = -120;
+            
+            // display silver
+            var silverImg = this.add.image(this.world.centerX, this.world.centerY+10, 'silver');
+            sprite.addChild(silverImg);
+            silverImg.x = -170;
+            silverImg.y = -45;
+            silverImg.width = 100;
+            silverImg.height = 100;
+            
+            var unlocktext2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED ELITE TROPHY', 20);
+            sprite.addChild(unlocktext2);
+            unlocktext2.x = -60;
+            unlocktext2.y = -30;
+            
+            //lock for gold achievement
+            var lockimg3 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            sprite.addChild(lockimg3);
+            lockimg3.x = -120;
+            lockimg3.y = 120;
+            
+            var locktext3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'Reach a score above\n 1000 to unlock', 20);
+            
+            sprite.addChild(locktext3);
+            locktext3.x = -70;
+            locktext3.y = 90;
+    
+        } else if(parseInt(localStorage.getItem('achieve')) ==  3){
+            
+            localStorage.setItem('isViewed', 3);
+            
+            //display bronze
+            var bronzeImg = this.add.image(this.world.centerX, this.world.centerY+10, 'bronze');
+            sprite.addChild(bronzeImg);
+            bronzeImg.x = -170;
+            bronzeImg.y = -155;
+            bronzeImg.width = 100;
+            bronzeImg.height = 100;
+            
+            var unlocktext1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED PRO TROPHY', 20);
+            sprite.addChild(unlocktext1);
+            unlocktext1.x = -60;
+            unlocktext1.y = -120;
+            
+            // display silver
+            var silverImg = this.add.image(this.world.centerX, this.world.centerY+10, 'silver');
+            sprite.addChild(silverImg);
+            silverImg.x = -170;
+            silverImg.y = -45;
+            silverImg.width = 100;
+            silverImg.height = 100;
+            
+            var unlocktext2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED ELITE TROPHY', 20);
+            sprite.addChild(unlocktext2);
+            unlocktext2.x = -60;
+            unlocktext2.y = -30;
+        
+            //display gold
+            var goldImg = this.add.image(this.world.centerX, this.world.centerY+10, 'gold');
+            sprite.addChild(goldImg);
+            goldImg.x = -170;
+            goldImg.y = 65;
+            goldImg.width = 100;
+            goldImg.height = 100;
+            
+            var unlocktext3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'UNLOCKED MASTER TROPHY', 20);
+            sprite.addChild(unlocktext3);
+            unlocktext3.x = -60;
+            unlocktext3.y = 80;
+                  
+        } else {
+            
+            //lock for bronze achievement
+            var lockimg1 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            var locktext1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', 'Reach a score above\n250 to unlock', 20);
+            
+            sprite.addChild(locktext1);
+            locktext1.x = -70;
+            locktext1.y = -100;
+            sprite.addChild(lockimg1);
+            lockimg1.x = -120;
+            lockimg1.y = -100;
+            
+            //lock for silver achievement
+            var lockimg2 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            var locktext2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '??  ??   ??', 30);
+            
+            sprite.addChild(locktext2);
+            locktext2.x = -70;
+            locktext2.y = -10;
+            sprite.addChild(lockimg2);
+            lockimg2.x = -120;
+            lockimg2.y = 10;
+            
+            //lock for gold achievement
+            var lockimg3 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
+            var locktext3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '??  ??   ??', 30);
+            
+            sprite.addChild(locktext3);
+            locktext3.x = -70;
+            locktext3.y = 100;
+            sprite.addChild(lockimg3);
+            lockimg3.x = -120;
+            lockimg3.y = 120;
+                       
+        }
+        
+        //lines
+        var line1 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '_______________________', 30);
         sprite.addChild(line1);
         line1.x = -160;
         line1.y = -90;
-        
-        //achieve 2 ------------------
-        var lockimg2 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
-        sprite.addChild(lockimg2);
-        lockimg2.x = -120;
-        lockimg2.y = -10;
-              
-        var line2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+               
+        var line2 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '_______________________', 30);
         sprite.addChild(line2);
         line2.x = -160;
-        line2.y = 0;
-        
-        //achieve 3 -----------------
-        var lockimg3 = this.createLock(this.world.centerX, this.world.centerY+10, 'lock');
-        sprite.addChild(lockimg3);
-        lockimg3.x = -120;
-        lockimg3.y = 80;
+        line2.y = 20;
               
-        var line3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '____________________', 30);
+        var line3 = this.add.bitmapText(this.world.centerX, this.world.centerY+10, 'gamefont', '_______________________', 30);
         sprite.addChild(line3);
         line3.x = -160;
-        line3.y = 90;
+        line3.y = 132;
         
         
         backToMenu = this.add.bitmapText(0 , 0,'gamefont', 'back', 30);
@@ -133,7 +320,7 @@ FindX.StartMenu.prototype = {
         sprite.addChild(backToMenu);
         backToMenu.anchor.setTo(0.5, 0.5);
         backToMenu.x = 10;
-        backToMenu.y = 200;
+        backToMenu.y = 300;
         
          backToMenu.events.onInputDown.add(
                    
@@ -145,6 +332,7 @@ FindX.StartMenu.prototype = {
                             highScoreButton.inputEnabled = true;
                             settingsButton.inputEnabled = true;
                             achievementButton.inputEnabled = true;
+                            crewButton.inputEnabled = true;
                             sprite.destroy();
                             backToMenu.destroy();
                         }, this)
@@ -153,8 +341,35 @@ FindX.StartMenu.prototype = {
         
     },
     
+    /**
+    * Creates the lock icon
+    * @param xLoc the location of the icon
+    * @return returns the lock icon with specified location
+    */
+    createLock: function(xloc, yloc, key) {
+        
+        var lockimg = this.add.image(xloc, yloc, key);
+        lockimg.width = 75;
+        lockimg.height = 75;    
+        lockimg.anchor.setTo(0.5, 0.5);
+       
+          
+        return lockimg;
+        
+    },
     
     /**
+    * Function call when achievement is click
+    * adds a tween to the achievement button
+    */
+    crewTweenFirst: function() {     
+        
+        this.add.tween(crewButton.scale).to( { x: .8, y: .8 }, 50, Phaser.Easing.Linear.None, true, 0, 0, true).onComplete.addOnce(
+            this.crewTween, this);
+        
+    },
+    
+     /**
     * Creates the credit screen.
     *
     */
@@ -167,6 +382,7 @@ FindX.StartMenu.prototype = {
         settingsButton.inputEnabled = false;
         achievementButton.inputEnabled = false;
         crewButton.inputEnabled = false;
+        
         
         var sprite = this.add.image(this.world.centerX, this.world.centerY+200, 'crewBG');
         sprite.anchor.setTo(0.5, 0.5);
@@ -282,23 +498,6 @@ FindX.StartMenu.prototype = {
     
     
     /**
-    * Creates the lock icon
-    * @param xLoc the location of the icon
-    * @return returns the lock icon with specified location
-    */
-    createLock: function(xloc, yloc, key) {
-        
-        var lockimg = this.add.image(xloc, yloc, key);
-        lockimg.width = 75;
-        lockimg.height = 75;    
-        lockimg.anchor.setTo(0.5, 0.5);
-       
-          
-        return lockimg;
-        
-    },
-    
-    /**
     * Function call when achievement is click
     * adds a tween to the achievement button
     */
@@ -322,6 +521,7 @@ FindX.StartMenu.prototype = {
             }, this);    
 	},
     
+    
     /*
      * Tween the leaderBoard button
      * then call the settings Menu thereafter
@@ -343,13 +543,16 @@ FindX.StartMenu.prototype = {
         highScoreButton.inputEnabled = false;
         settingsButton.inputEnabled = false;
         achievementButton.inputEnabled = false;
+        crewButton.inputEnabled = false;
         
         var score = [];
         var name = [];
         var rank = [];
+        var achieve =[];
         var titleIndex;
         var sprite = this.add.image(this.world.centerX, this.world.centerY+10, 'settingsBG');
         sprite.anchor.setTo(0.5, 0.5);
+        
         
         backToMenu = this.add.bitmapText(0 , 0,'gamefont', 'back', 30);
         backToMenu.inputEnabled = true;
@@ -358,9 +561,9 @@ FindX.StartMenu.prototype = {
         sprite.addChild(highScore);
         highScore.anchor.setTo(0.5, 0.5);
         highScore.x = 0;  
-        highScore.y = -200;
+        highScore.y = -270;
         
-        var yPos = -100;
+        var yPos = -140;
         var xPos = 0;
                     
         $.ajax({
@@ -370,66 +573,121 @@ FindX.StartMenu.prototype = {
             cache: false,
             success: function(data) {
                      
-                for(var i = 0; i < 10; i++ ) {
+                for(var i = 0; i < data.length; i++ ) {
                     localStorage.setItem('topName' + i , data[i].name);
                     localStorage.setItem('topScore' + i , data[i].score);
+                    localStorage.setItem('trophy' + i, data[i].achieve);
                 }       
             }
                    
         });
         
-        titleIndex = this.add.bitmapText(0 , 0,'gamefont', 'RANK   ' + 'NAME   ' + 'SCORE' , 30);
+        titleIndex = this.add.bitmapText(0 , 0,'gamefont', 'RANK        ' + '   NAME       ' + '       SCORE      '  + '   TROPHY', 20);
         sprite.addChild(titleIndex);
         titleIndex.anchor.setTo(0.5, 0.5);
         titleIndex.x = 0;  
-        titleIndex.y = -150;   
+        titleIndex.y = -180;   
         
-        for(var i = 0; i < 10; i++, yPos += 28 ) {
+        var fontHighScore = 32; // font for the high score records
+        
+        for(var i = 0; i < 10; i++, yPos += 40 ) {
             
             if (localStorage.getItem('topName' + i) != null) {
                 //rank
-                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 27);
+                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , fontHighScore);
                 sprite.addChild(rank[i]);
                 rank[i].anchor.setTo(0.5, 0.5);
-                rank[i].x = -125;  
+                rank[i].x = -220;  
                 rank[i].y = yPos;
 
                 //name
-                name[i] = this.add.bitmapText(0 , 0,'boardfont',  "" + localStorage.getItem('topName' + i), 27);
+                name[i] = this.add.bitmapText(0 , 0,'boardfont',  "" + localStorage.getItem('topName' + i), fontHighScore);
                 sprite.addChild(name[i]);
                 name[i].anchor.setTo(0.5, 0.5);
-                name[i].x = -5;  
+                name[i].x = -85;  
                 name[i].y = yPos;
 
                 //score
-                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topScore' + i), 27);
+                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "" + localStorage.getItem('topScore' + i), fontHighScore);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
-                score[i].x = 120;  
+                score[i].x = 70;  
                 score[i].y = yPos;
+                
+                //achieve
+                
+                if(parseInt(localStorage.getItem('trophy' + i)) == 1){
+                    
+                    var t_bronze = this.add.image(0,0, 'bronze');
+                    sprite.addChild(t_bronze);
+                    t_bronze.anchor.setTo(0.5, 0.5);
+                    t_bronze.x = 200;  
+                    t_bronze.y = yPos;
+                    t_bronze.height = 40;
+                    t_bronze.width = 40;
+                
+                } else if (parseInt(localStorage.getItem('trophy' + i)) == 2){
+                    
+                    var t_bronze_silver= this.add.image(0,0, 'bronze_silver');
+                    t_bronze_silver.anchor.setTo(0.5, 0.5);  
+                    sprite.addChild(t_bronze_silver);
+                    t_bronze_silver.x = 200;
+                    t_bronze_silver.y = yPos;
+                    t_bronze_silver.height = 40;
+                    t_bronze_silver.width = 82;
+                    
+        
+                           
+                } else if (parseInt(localStorage.getItem('trophy' + i)) == 3){
+                    
+                    console.log("inside achieve 3");
+                    var withgold = this.add.image(0,0, 'bronze_silver_gold');
+                    withgold.anchor.setTo(0.5, 0.5); 
+                    
+                    sprite.addChild(withgold);
+                    withgold.x = 200;
+                    withgold.y = yPos;
+                    withgold.height = 40;
+                    withgold.width = 120;
+                    
+                } else {
+                    
+                    var dash = this.add.bitmapText(0 , 0,'gamefont',  "--", fontHighScore);
+                    sprite.addChild(dash);
+                    dash.anchor.setTo(0.5, 0.5);
+                    dash.x = 200;  
+                    dash.y = yPos;
+                }
                 
             }else {
                 
                 //rank
-                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , 27);
+                rank[i] = this.add.bitmapText(0 , 0,'gamefont', "" + (i+1) , fontHighScore);
                 sprite.addChild(rank[i]);
                 rank[i].anchor.setTo(0.5, 0.5);
-                rank[i].x = -125;  
+                rank[i].x = -220;  
                 rank[i].y = yPos;
 
                 //name
-                name[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 27);
+                name[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", fontHighScore);
                 sprite.addChild(name[i]);
                 name[i].anchor.setTo(0.5, 0.5);
-                name[i].x = -5;  
+                name[i].x = -85;  
                 name[i].y = yPos;
 
                 //score
-                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", 27);
+                score[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", fontHighScore);
                 sprite.addChild(score[i]);
                 score[i].anchor.setTo(0.5, 0.5);
-                score[i].x = 120;  
+                score[i].x = 70;  
                 score[i].y = yPos;     
+                
+                //achieve
+                achieve[i] = this.add.bitmapText(0 , 0,'gamefont',  "--", fontHighScore);
+                sprite.addChild(achieve[i]);
+                achieve[i].anchor.setTo(0.5, 0.5);
+                achieve[i].x = 200;  
+                achieve[i].y = yPos;   
             }
         }
         
@@ -438,7 +696,7 @@ FindX.StartMenu.prototype = {
         sprite.addChild(backToMenu);
         backToMenu.anchor.setTo(0.5, 0.5);
         backToMenu.x = 10;
-        backToMenu.y = 200;
+        backToMenu.y = 300;
         
         backToMenu.events.onInputDown.add(
             function() {
@@ -449,6 +707,7 @@ FindX.StartMenu.prototype = {
                         highScoreButton.inputEnabled = true;
                         settingsButton.inputEnabled = true;
                         achievementButton.inputEnabled = true;
+                        crewButton.inputEnabled = true;
                         sprite.destroy(); 
                         backToMenu.destroy();
                     }, this)
@@ -467,6 +726,7 @@ FindX.StartMenu.prototype = {
         highScoreButton.inputEnabled = false;
         settingsButton.inputEnabled = false;
         achievementButton.inputEnabled = false;
+        crewButton.inputEnabled = false;
         
         // background Sprite
         var sprite = this.add.image(this.world.centerX, this.world.centerY+10, 'settingsBG');
@@ -521,6 +781,7 @@ FindX.StartMenu.prototype = {
                             highScoreButton.inputEnabled = true;
                             settingsButton.inputEnabled = true;
                             achievementButton.inputEnabled = true;
+                            crewButton.inputEnabled = true;
                             soundText.destroy();
                             this.soundToggle.destroy();
                             sprite.destroy();
